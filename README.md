@@ -1,50 +1,95 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/h4Bm0pZo)
+# 🎻 Music Genre Clustering
 
-Deadline: 4/5 at 11:59 pm
+_Project Report_
 
+### 📂 Dataset
 
-# 🏝️👩‍💻 VandyDataScience Exec Assessment 2024 👩‍💻🏝️
+FMA (Free Music Archive) Dataset: [website](https://freemusicarchive.org/) | [paper](https://arxiv.org/pdf/1612.01840.pdf) | [github](https://github.com/mdeff/fma/blob/master/baselines.ipynb)
 
-Heya amazing person! This is the coding assessment for the Exec board in VandyDataScience (or VDS), an undergraduate student organization dedicated to making a positive difference in our local community through the power of numbers📊. So if you're here because you're interested in joining us this 2024 year, you're in the right place! And we want to take this chance to sincerely thank you for being interested in us 😊😊.
+The FMA dataset contains information about all the genres that a track can be categorized under, as well as information about the audio in itself.
 
-We've got some really cool projects lined up for this year that we are very excited to work on with you. To do this, however, we want to make sure that everyone who joins us is familiar with the kind of tech that we'll be using during the year. This assessment is a chance for you to get experience with the kind of tools we'll be using in VDS and for us to make sure that we can hit the ground running on these super cool projects that we're going to be doing during the year 😎.
+### 📌 Focus Questions
 
-The main goal of this assessment is for us to assess your comfort with using data science to solve real-world issues, and we hope you have fun with the problems we've prepared for you! _(we are realllyy excited to see the innovative solutions you come up with❗)_
+Genre classification is a highly subjective process, changing on the basis of cultures and experience. My goal through this project is to identify how genres can be identified through a more quantitative process i.e. by clustering the tracks on the basis of the fundamental audio features of the track.
+As defined by Spotify, the [essential features](https://help.spotontrack.com/article/what-do-the-audio-features-mean) that I have focused on are as follows:
 
+1. Acousticness (confidence of the track being acoustic)
+2. Danceability (tempo, rhythm stability, beat strength, and overall regularity)
+3. Energy (intensity, dynamic range, perceived loudness, timbre, onset rate, and general entropy)
+4. Instrumentalness
+5. Liveness (presence of an audience)
+6. Speechiness (presence of spoken words in a track)
+7. Tempo (BPM)
+8. Valence (musical positiveness or cheerfulness)
 
-## The Challenge
+### 🧹 Dataset cleaning procedure
 
-This challenge runs from 4/1 to 4/5, which means that you'll have until 4/5 at 11:59pm to finish AND submit your assignment. <u>You must submit your work by emailing [Adaline](jia.yin.leong@vanderbilt.edu) with your GitHub repository link.</u> **Any work submitted after the due date will not be considered**.
+The general steps I followed to clean this dataset are
 
-There are three levels, with each level directly building off of the last in order to create one full project.
-You can start by going to [Level 1](Level_1/README.md), [Level 2](Level_2/README.md), and [Level 3](Level_3/README.md) to learn the specifics of each problem. All of your notebooks (most of you will have just one) should be in the [Notebook(s)](Notebook(s)) folder, notebooks are files titled (name).py or (name).ipynb. Each level is meant to guide you through the process of cleaning a dataset, creating a model to solve a problem, and evaluating the model that you have created. The code used to solve each of these levels should be in the aforementioned folder, though each level will have a mini challenge you should submit (the directions are in each level).
+1. Fix data types
+2. Fix indexing and multilevel indexing
+3. Group subgenres into broader genres
+4. Handle missing data: Data imputation / removal
+5. Visualize data distributions
+6. Merge all required and cleaned data into a single file and save it
 
-Good luck!!! You got this 😁😁
+### 🧮 Algorithm / Model Architecture
 
-## FAQ
+I decided to take a twist on the standard K-Means procedure by first reducing the dimensionality of data using a Autoencoder then performing clustering on the compressed representation. The idea was to combat the issue that clustering faces through the [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality), wherein it's performance suffers at higher dimensional of inputs.
 
-Please do not hesitate to email [Adaline](jia.yin.leong@vanderbilt.edu) if you have any questions whatsoever about this assessemnt, VandyDataScience, or life.
+By first training an [autoencoder](https://www.tensorflow.org/tutorials/generative/autoencoder), I reduced the dimensionality from 8 (8 primary audio features defined previously) to 5 (selected through manual trials). The encoder compresses the data to only retain the vital features. After this, K-Means performs clustering based on this compressed data to assign classes to each of the tracks.
 
-**Q: When is the deadline?**
-A: 4/5 at 11:59 pm! No further commits will be accepted after the deadline has passed.
+This approach is effective for identifying patterns and similarities within large datasets, as it is capable of simplifying the information while preserving the key characteristics of the data, enabling more efficient clustering and analysis.
 
-**Q: What resources can I use?**
-A: Almost anything! Feel free to reference any textbook code solutions, tutorials, StackOverflow posts, and _friend who strongly suggests using a while loop instead of hard coding all the cases in line 374_. Part of learning is not knowing how to solve problems, and we encourage you to find and use resources to overcome it! Keep in mind however, that learning is _not_ copying code verbatim from someone somwehere. Because of this, the only exceptions to our 'almost anything' rule is generative AI such as ChatGPT and no code machine learning platforms such as AutoML. Be prepared that in later stages we will be asking you to explain the solutions you have come up with in this assessment.
+Here is a figure from a paper that also proposes a similar procedure. While the paper defines a deeper neural network, I choose to use fewer layers to prevent overfitting.
 
-**Q: What language should I use?**
-A: We highly recommend Python! Most of the projects we do during the year will use Python, and we will give bonus points to anyone who chooses to use Python in their assessment. Ultimately the language you choose is up to you, though keep in mind some languages are better suited for certain problems _hint hint wink wink 😉_
+![Model architecture example](./assets/model_architecture.png)  
+_"Lu, Si, and Ruisi Li. "DAC: Deep Autoencoder-based Clustering, a General Deep Learning Framework of Representation Learning." Portland State University."_
 
-**Q: How will I be graded?**
-A: Here is the criteria we will be judging on:
-- Problem Solution
-    - Does the solution you chose make sense in context of the problem? 
-- Code Readability
-    - If you left your code and came back to it three years later, could you still understand it?
-- Explanation
-    - How clearly did you explain your thinking process and solution?
-- Bonus Points (will not hurt your application, only help it)
-    - Explained in each level!
+### Additional information
 
-**Q: I finished the assessment, what next?**
-A: Congratulations on finishing the assessment!! 
-Please submit your finished work by emailing your GitHub repository link to [Adaline](jia.yin.leong@vanderbilt.edu) so we can review your work (unsubmited work, even if it is completed, will not be evaluated). After 4/5, we will begin judging all submissions and you can expect an email from us within 1-2 weeks. This is the stage where we will be sending out invitations to interviews!
+Other models I tried using before settling on the Autoencoder-K Means architecture are the following:
+
+- DBSCAN
+- Autoencoder-DBSCAN
+- K Means
+- CNN
+
+### 📝 Analysis
+
+Considering that the goal of this project was to see how quantitative genre classification compares to qualitative genre classification, I thought it would be better to first introduce a qualitative discussion of the results as they compare to my understanding of different genres.
+
+The clustering algorithms eventually formed the following clusters:  
+<img src="./assets/classifications.png" alt="clusters" width="30%">
+
+- Classical, folk, jazz were clustered together
+- Pop formed its own cluster
+- Electronic formed its own cluster
+- Hip-Hop formed its own cluster
+- Rock formed its own cluster
+
+Notably, classical, folk and jazz all tend to have relatively acoustic sounds but typically of different instruments However, the dataset utlized only contained this information through a confidence score of whether the track was acoustic or not, without identifying the type instrument. Moreover, these genres also often observe similar levels of instrumentalness, speechiness, and liveliness. Therefore, it makes sense that these would be clustered together at a lack of differentiation of instruments utilized.
+
+### 📊 Evaluation Metrics
+
+I selected the:
+
+- Davies-Bouldin Index; and
+- Calinski-Harabasz Index
+
+for my evaulation metrics, both of which are popular choices for evaluating clustering algorithms.
+
+Both indices provide easily interpretable results. Lower values of the Davies-Bouldin Index indicate better clustering, as it measures the average similarity between each cluster and its most similar cluster.  
+Meanwhile, higher values of the Calinski-Harabasz Index indicate better clustering, as it measures the ratio of dispersion between and within clusters.
+
+In the context of genre classification, tracks have been clustered with others that have apparently similar audio features. So these scores would give us a quantitative method to compare how similar different songs that have grouped together are, and also how different each genre is from the others.
+
+Therefore, by considering the two metrics, we can get a full picture of clustering through the comparison of tracks within each genre as well as across different genre.
+
+### 📚 Resources Utilized
+
+> _"Lu, Si, and Ruisi Li. "DAC: Deep Autoencoder-based Clustering, a General Deep Learning Framework of Representation Learning." Portland State University." [\[link\]](https://arxiv.org/pdf/2102.07472.pdf)_
+>
+> FMA Dataset [\[github\]](https://github.com/mdeff/fma/tree/master?tab=readme-ov-file)
+>
+> Other genre clustering projects: [\[1\]](https://www.kaggle.com/code/shabanamir/unsupervised-ml-project-music-clustering) [\[2\]](https://medium.com/latinxinai/discovering-descriptive-music-genres-using-k-means-clustering-d19bdea5e443) > [Stern, Samuel Walter, "Analysis of Music Genre Clustering Algorithms" (2021). Theses and Dissertations. 2839.](https://dc.uwm.edu/cgi/viewcontent.cgi?article=3844&context=etd) > [GeeksForGeeks](https://www.geeksforgeeks.org/clustering-metrics/#steps-to-evaluate-clustering-using-sklearn)
